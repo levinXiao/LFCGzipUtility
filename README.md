@@ -1,2 +1,2 @@
 # LFCGzipUtility
-A OC GZip Library  saved by backup  easy-to-use
+A OC GZip Library  saved for backup  easy-to-use
