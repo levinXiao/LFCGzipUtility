@@ -17,3 +17,8 @@ find on website
 
 libz.dylib / libz.tbd ( for iOS9.0 or later )
 
+
+#Special
+本人不是原作者
+
+I am not the original author
