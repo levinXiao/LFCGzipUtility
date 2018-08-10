@@ -1,10 +1,6 @@
 # LFCGzipUtility
 An OC GZip Library  saved for backup  easy-to-use
 
-find on website 
-
-@author Clint Harris (www.clintharris.net) 
-
 # How to Use
 ```
 + (NSData *)gzipData:(NSData*)pUncompressedData;  //压缩
