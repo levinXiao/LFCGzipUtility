@@ -14,5 +14,3 @@ An OC GZip Library  saved for backup  easy-to-use
 libz.dylib / libz.tbd ( for iOS9.0 or later )
 
 
-# Special
-本人不是原作者
