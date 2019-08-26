@@ -2,28 +2,24 @@
  
 @implementation LFCGzipUtility
  
-+(NSData*) gzipData: (NSData*)pUncompressedData
-{
-    if (!pUncompressedData || [pUncompressedData length] == 0)
-    {
++ (NSData *)gzipData:(NSData*)pUncompressedData {
+    if (!pUncompressedData || [pUncompressedData length] == 0) {
         NSLog(@"%s: Error: Can't compress an empty or null NSData object.", __func__);
         return nil;
     }
  
     z_stream zlibStreamStruct;
-    zlibStreamStruct.zalloc    = Z_NULL; // Set zalloc, zfree, and opaque to Z_NULL so
-    zlibStreamStruct.zfree     = Z_NULL; // that when we call deflateInit2 they will be
-    zlibStreamStruct.opaque    = Z_NULL; // updated to use default allocation functions.
-    zlibStreamStruct.total_out = 0; // Total number of output bytes produced so far
-    zlibStreamStruct.next_in   = (Bytef*)[pUncompressedData bytes]; // Pointer to input bytes
-    zlibStreamStruct.avail_in  = [pUncompressedData length]; // Number of input bytes left to process
+    zlibStreamStruct.zalloc    = Z_NULL;
+    zlibStreamStruct.zfree     = Z_NULL;
+    zlibStreamStruct.opaque    = Z_NULL;
+    zlibStreamStruct.total_out = 0;
+    zlibStreamStruct.next_in   = (Bytef*)[pUncompressedData bytes];
+    zlibStreamStruct.avail_in  = [pUncompressedData length];
  
     int initError = deflateInit2(&zlibStreamStruct, Z_DEFAULT_COMPRESSION, Z_DEFLATED, (15+16), 8, Z_DEFAULT_STRATEGY);
-    if (initError != Z_OK)
-    {
+    if (initError != Z_OK) {
         NSString *errorMsg = nil;
-        switch (initError)
-        {
+        switch (initError) {
             case Z_STREAM_ERROR:
                 errorMsg = @"Invalid parameter passed in to function.";
                 break;
@@ -46,9 +42,7 @@
     NSMutableData *compressedData = [NSMutableData dataWithLength:[pUncompressedData length] * 1.01 + 12];
  
     int deflateStatus;
-    do
-    {
-        // Store location where next byte should be put in next_out
+    do {
         zlibStreamStruct.next_out = [compressedData mutableBytes] + zlibStreamStruct.total_out;
  
         // Calculate the amount of remaining free space in the output buffer
@@ -60,11 +54,9 @@
     } while ( deflateStatus == Z_OK );
  
     // Check for zlib error and convert code to usable error message if appropriate
-    if (deflateStatus != Z_STREAM_END)
-    {
+    if (deflateStatus != Z_STREAM_END) {
 //        NSString *errorMsg = nil;
-//        switch (deflateStatus)
-//        {
+//        switch (deflateStatus) {
 //            case Z_ERRNO:
 //                errorMsg = @"Error occured while reading file.";
 //                break;
@@ -89,23 +81,23 @@
 //        }
         //NSLog(@"%s: zlib error while attempting compression: \"%@\" Message: \"%s\"", __func__, errorMsg, zlibStreamStruct.msg);
  
-        // Free data structures that were dynamically created for the stream.
         deflateEnd(&zlibStreamStruct);
  
         return nil;
     }
     // Free data structures that were dynamically created for the stream.
     deflateEnd(&zlibStreamStruct);
-    [compressedData setLength: zlibStreamStruct.total_out];
-    NSLog(@"%s: Compressed file from %d KB to %d KB", __func__, [pUncompressedData length]/1024, [compressedData length]/1024);
  
+    [compressedData setLength: zlibStreamStruct.total_out];
+ 
+    NSLog(@"%s: Compressed file from %d KB to %d KB", __func__, [pUncompressedData length]/1024, [compressedData length]/1024);
     return compressedData;
 }
  
-+(NSData *)ungzipData:(NSData *)compressedData
-{
-    if ([compressedData length] == 0)
++ (NSData *)ungzipData:(NSData *)compressedData {
+    if ([compressedData length] == 0) {
         return compressedData;
+    }
  
     unsigned full_length = [compressedData length];
     unsigned half_length = [compressedData length] / 2;
@@ -124,7 +116,6 @@
         return nil;
  
     while (!done) {
-        // Make sure we have enough room and reset the lengths.
         if (strm.total_out >= [decompressed length]) {
             [decompressed increaseLengthBy: half_length];
         }
@@ -139,9 +130,9 @@
         }
     }
  
-    if (inflateEnd (&strm) != Z_OK)
+    if (inflateEnd (&strm) != Z_OK) {
         return nil;
-    // Set real length.
+    }
     if (done) {
         [decompressed setLength: strm.total_out];
         return [NSData dataWithData: decompressed];
