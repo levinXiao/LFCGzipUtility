@@ -44,10 +44,6 @@
     int deflateStatus;
     do {
         zlibStreamStruct.next_out = [compressedData mutableBytes] + zlibStreamStruct.total_out;
- 
-        // Calculate the amount of remaining free space in the output buffer
-        // by subtracting the number of bytes that have been written so far
-        // from the buffer's total capacity
         zlibStreamStruct.avail_out = [compressedData length] - zlibStreamStruct.total_out;
         deflateStatus = deflate(&zlibStreamStruct, Z_FINISH);
  
@@ -85,7 +81,7 @@
  
         return nil;
     }
-    // Free data structures that were dynamically created for the stream.
+ 
     deflateEnd(&zlibStreamStruct);
  
     [compressedData setLength: zlibStreamStruct.total_out];
@@ -134,7 +130,7 @@
         return nil;
     }
     if (done) {
-        [decompressed setLength: strm.total_out];
+        [decompressed setLength:strm.total_out];
         return [NSData dataWithData: decompressed];
     }
     return nil;
